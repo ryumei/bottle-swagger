@@ -205,7 +205,7 @@ class TestBottleSwagger(TestCase):
         self.assertEqual(response.status_int, 200)
 
     def test_formdata_parameters(self):
-        response = self._test_request(url="/thing_formdata", route_url="/thing_formdata", method='POST', request_json='thing_id=123', is_json_request=False)
+        response = self._test_request(url="/thing_formdata", route_url="/thing_formdata", method='POST', request_json='thing_id=123', content_type='multipart/form-data')
         self.assertEqual(response.status_int, 200)
 
     def test_get_swagger_schema(self):
@@ -216,7 +216,7 @@ class TestBottleSwagger(TestCase):
         self.assertEquals(response.json, self.SWAGGER_DEF)
 
     def _test_request(self, swagger_plugin=None, method='GET', url='/thing', route_url=None, request_json=VALID_JSON,
-                      response_json=VALID_JSON, headers=None, is_json_request=True):
+                      response_json=VALID_JSON, headers=None, content_type='application/json'):
         if swagger_plugin is None:
             swagger_plugin = self._make_swagger_plugin()
         if response_json is None:
@@ -235,10 +235,10 @@ class TestBottleSwagger(TestCase):
         if method.upper() == 'GET':
             response = test_app.get(url, expect_errors=True, headers=headers)
         elif method.upper() == 'POST':
-            if is_json_request:
+            if content_type == 'application/json':
                 response = test_app.post_json(url, request_json, expect_errors=True, headers=headers)
             else:
-                response = test_app.post(url, request_json, content_type="multipart/form-data", expect_errors=True, headers=headers)
+                response = test_app.post(url, request_json, content_type=content_type, expect_errors=True, headers=headers)
         else:
 
             raise Exception("Invalid method {}".format(method))
