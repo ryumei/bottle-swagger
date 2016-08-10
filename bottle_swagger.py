@@ -130,6 +130,10 @@ class BottleIncomingRequest(IncomingRequest):
     def headers(self):
         return self.request.headers
 
+    @property
+    def form(self):
+        return self.request.forms
+
 class BottleOutgoingResponse(OutgoingResponse):
     def __init__(self, bottle_response, response_json):
         self.response = bottle_response
